@@ -110,8 +110,8 @@ class GenericEmail:
       self.Cc = False
       self.server = server
       self.serverport = 25
-      self.username = 'skyliverobot@astronomix.org'
-      self.password = 'antanissimo'
+      self.username = 'test@mail.com'
+      self.password = 'passwd'
       self.msg=MIMEText.MIMEText("Default message")
 
    def SetTo(self, to):
