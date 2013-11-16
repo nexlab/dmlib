@@ -24,6 +24,8 @@
 from twisted.web import client, error, http
 from twisted.internet import reactor, defer, task
 from twisted.python import failure
+from urlparse import urlunparse
+from urllib import splithost, splittype
 import gzip
 import StringIO
 import time
