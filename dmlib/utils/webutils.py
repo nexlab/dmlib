@@ -21,13 +21,52 @@
 #
 ##############################################################################
 
-from twisted.web import client, error
+from twisted.web import client, error, http
 from twisted.internet import reactor, defer, task
 from twisted.python import failure
 import gzip
 import StringIO
 import time
 import base64, urlparse
+
+def _parse(url, defaultPort=None):
+    """
+    Split the given URL into the scheme, host, port, and path.
+
+    @type url: C{str}
+    @param url: An URL to parse.
+
+    @type defaultPort: C{int} or C{None}
+    @param defaultPort: An alternate value to use as the port if the URL does
+    not include one.
+
+    @return: A four-tuple of the scheme, host, port, and path of the URL.  All
+    of these are C{str} instances except for port, which is an C{int}.
+    """
+    url = url.strip()
+    parsed = http.urlparse(url)
+    scheme = parsed[0]
+    path = urlunparse(('', '') + parsed[2:])
+
+    if defaultPort is None:
+        if scheme == 'https':
+            defaultPort = 443
+        else:
+            defaultPort = 80
+
+    host, port = parsed[1], defaultPort
+    if ':' in host:
+        host, port = host.split(':')
+        try:
+            port = int(port)
+        except ValueError:
+            port = defaultPort
+
+    if path == '':
+        path = '/'
+
+    return scheme, host, port, path
+
 
 class HTTPPageGetter(client.HTTPPageGetter):
 
@@ -273,7 +312,7 @@ def getPage(url, progress=False, stream=False, proxy_host = None, proxy_port = N
          url = url.replace(parsed.scheme+"://"+parsed.username+"@", parsed.scheme+"://")
       else:
          url = url.replace(parsed.scheme+"://"+parsed.username+":"+parsed.password+"@", parsed.scheme+"://")
-   scheme, host, port, path = client._parse(url)
+   scheme, host, port, path = _parse(url)
 
    if not progress:
       factory = HTTPClientFactory(url, proxy_host = proxy_host, proxy_port = proxy_port, headerscb = headerscb, headers = headers,  *args, **kwargs)
