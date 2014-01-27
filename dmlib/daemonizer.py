@@ -133,6 +133,7 @@ class Daemonizer:
         except IOError:
             pid = None
         return pid
+
     def is_process_running(self):
         pid = self.get_pid()
         if pid:

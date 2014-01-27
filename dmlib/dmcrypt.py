@@ -332,4 +332,5 @@ def B64AESDecrypt(key, iv, data):
       decrypted = cipher.decrypt(decoded)
    except:
       decrypted = ""
+      return decrypted
    return StripPadding(decrypted, INTERRUPT, PAD)
