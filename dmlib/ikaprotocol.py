@@ -231,7 +231,7 @@ class IkaPacket(object):
          self.setEncType(self.enctype)
       self.epoch=self.hdr.epoch
       if memkey:
-         self.setMemKey(memkey)
+         self.setMemkey(memkey)
          self.setMemIV(pwgen.generateIV128(memkey))
       if memiv:
          self.setMemIV(memiv)
