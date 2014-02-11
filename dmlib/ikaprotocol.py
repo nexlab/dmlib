@@ -216,8 +216,10 @@ class IkaPacket(object):
    epoch=None
    enctype=C.IKAP_ENC_AES256
    memkey=DEFKEY
+   memiv=DEFIV
 
-   def __init__(self, hdr=None):
+
+   def __init__(self, hdr=None, memkey=False, memiv=False):
       if not hdr:
          self.hdr=IkaPacketHeader()
          self.hdr.enctype=C.IKAP_ENC_AES256
@@ -228,6 +230,11 @@ class IkaPacket(object):
          self.setArg(self.arg)
          self.setEncType(self.enctype)
       self.epoch=self.hdr.epoch
+      if memkey:
+         self.setMemKey(memkey)
+         self.setMemIV(pwgen.generateIV128(memkey))
+      if memiv:
+         self.setMemIV(memiv)
 
 
 
@@ -278,16 +285,20 @@ class IkaPacket(object):
    def setMemkey(self, memkey):
       self.memkey=memkey
 
+   def setMemIV(self, memiv):
+      self.memiv=memiv
+
    def generateKey(self):
       self.hdr.key = struct.unpack('<4L', pwgen.GenerateHexKey(16))
       self.calculateChecksum()
 
    def _aes(self):
       # XXX Gestire differenti encryption
-      aeshdr=AES256(struct.unpack('<8L', DEFKEY), struct.unpack('<4L', DEFIV))
+      aeshdr=AES256(struct.unpack('<8L', self.memkey), struct.unpack('<4L', self.memiv))
 
-      aesdata=AES256(struct.unpack('<8L', DEFKEY), struct.unpack('<4L', DEFIV))
-      aesdata.iv=self.hdr.key
+      #aesdata=AES256(struct.unpack('<8L', memkey), struct.unpack('<4L', memiv))
+      #aesdata.iv=self.hdr.key
+      aesdata=AES256(struct.unpack('<8L', self.memkey), self.hdr.key)
 
       aeshdr.setCleanData(self.hdr.tobytes())
 

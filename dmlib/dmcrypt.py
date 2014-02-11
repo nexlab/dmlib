@@ -46,8 +46,12 @@ def DMHash128(data):
    reshash=copy.deepcopy(DMHASH)
    i=0
    while(len(data)<16):
-      data+=struct.pack('B', struct.unpack('B', data[i])[0]^struct.unpack('B', data[len(data)-1])[0])
+      #data+=struct.pack('B', struct.unpack('B', data[i])[0]^struct.unpack('B', data[len(data)-1])[0])
+      data+=struct.pack('<B', struct.unpack('<B', data[i])[0]^struct.unpack('<B', data[len(data)-1] if ord(data[len(data)-1]) else data[len(data)-2])[0])
       i+=1
+      if not ord(data[len(data)-1]):
+         data=data[:-1]
+
    data=struct.unpack('<4I', data[:16])
    i=0
    while(i<4):
@@ -63,8 +67,12 @@ def DMHash256(data):
    reshash+=reshash
    i=0
    while(len(data)<32):
-      data+=struct.pack('B', struct.unpack('B', data[i])[0]^struct.unpack('B', data[len(data)-1])[0])
+      #data+=struct.pack('B', struct.unpack('B', data[i])[0]^struct.unpack('B', data[len(data)-1])[0])
+      data+=struct.pack('<B', struct.unpack('<B', data[i])[0]^struct.unpack('<B', data[len(data)-1] if ord(data[len(data)-1]) else data[len(data)-2])[0])
       i+=1
+      if not ord(data[len(data)-1]):
+         data=data[:-1]
+
    data=struct.unpack('<8I', data[:32])
    i=0
    while(i<8):
