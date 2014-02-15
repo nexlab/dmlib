@@ -31,7 +31,36 @@ except:
    import md5
    import sha1
 
+
+class ConvenienceCaller(object):
+   """
+      This metaclass build and abstraction of an object instance so
+      that other objects can call it as it is a module, and permit
+      to the original object to setup a specific callback
+      to the caller so it can manage the calls originated by the caller
+      with local methods
+   """
+   def __init__(self, callerfunc):
+      """
+         @params callerfunc: function/method to be used as callback
+                             inside the original class of the abstract object
+
+      """
+      self.callerfunc=callerfunc
+
+   def __getattribute__(self, name):
+      """
+         This do the magic, transforming every called method in a call
+         to the callerfunction of the original object
+
+         This method isn't intended to be called directly!
+      """
+      callerfunc = object.__getattribute__(self, 'callerfunc')
+      return callerfunc(name)
+
+
 from ConfigParser import SafeConfigParser
+
 
 def revlist(l): l.reverse(); return l
 

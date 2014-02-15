@@ -132,6 +132,17 @@ class HTTPPageGetter(client.HTTPPageGetter):
       self.transport.loseConnection()
 
 
+   def handleStatus_401(self):
+      self.handleStatusDefault()
+      self.factory.noPage(
+            failure.Failure(
+               error.Error(self.status,self.message,None)
+            )
+         )
+      self.quietLoss = 0
+      self.transport.loseConnection()
+
+
    def handleStatus_301(self):
       l = self.headers.get('location')
       if not l:
@@ -249,6 +260,7 @@ class HTTPClientFactory(client.HTTPClientFactory):
           if self.uniqueid:
              res=(page, self.uniqueid)
           self.deferred.callback(res)
+
 
     def gotHeaders(self, headers):
        if self.headerscb and callable(self.headerscb):
