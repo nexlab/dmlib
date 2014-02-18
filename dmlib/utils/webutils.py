@@ -145,9 +145,11 @@ class HTTPPageGetter(client.HTTPPageGetter):
 
    def handleStatus_301(self):
       l = self.headers.get('location')
-      if not l or self.factory.nolocation:
+      if not l:
          self.handleStatusDefault()
          return
+      if self.factory.nolocation:
+         return self.handleStatus_200()
       url = l[0]
       if self.factory.path==url and self.factory.method=="POST":
          self.factory.method="GET"
