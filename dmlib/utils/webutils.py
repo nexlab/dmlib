@@ -145,7 +145,7 @@ class HTTPPageGetter(client.HTTPPageGetter):
 
    def handleStatus_301(self):
       l = self.headers.get('location')
-      if not l:
+      if not l or self.factory.nolocation:
          self.handleStatusDefault()
          return
       url = l[0]
@@ -315,7 +315,7 @@ class HTTPClientFactoryProgressStream(HTTPClientFactoryProgress):
 
 
 def getPage(url, progress=False, stream=False, proxy_host = None, proxy_port = None, headers=None,
-            contextFactory = None, uniqueid = False, http_user=None, http_password=None, headerscb=None, *args, **kwargs):
+            contextFactory = None, uniqueid = False, http_user=None, http_password=None, headerscb=None, nolocation=False, *args, **kwargs):
 
    parsed = urlparse.urlsplit(url)
    if not http_user:
@@ -345,6 +345,7 @@ def getPage(url, progress=False, stream=False, proxy_host = None, proxy_port = N
    factory.http_user = http_user
    factory.http_password = http_password
    factory.uniqueid=uniqueid
+   factory.nolocation=nolocation
 
    if scheme == 'https':
       from twisted.internet import ssl
