@@ -149,6 +149,8 @@ class HTTPPageGetter(client.HTTPPageGetter):
          self.handleStatusDefault()
          return
       url = l[0]
+      if self.factory.path==url and self.factory.method=="POST":
+         self.factory.method="GET"
       if self.followRedirect:
          scheme, host, port, path = \
             client. _parse(url, defaultPort=self.transport.getPeer().port)
