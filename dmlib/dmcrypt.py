@@ -316,7 +316,10 @@ def AddPadding(data, interrupt, pad, block_size):
    return ''.join([new_data, pad_string])
 
 def StripPadding(data, interrupt, pad):
-   return data.rstrip(pad).rstrip(interrupt)
+   try:
+      return data.rstrip(pad).rstrip(interrupt)
+   except:
+      return ""
 
 
 def B64AESEncrypt(key, iv, data):
